@@ -2,32 +2,41 @@ package com.tz.shwe.final_project;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.inputmethodservice.ExtractEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.view.KeyEvent;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.view.View;
 
 import java.util.Vector;
+import java.util.concurrent.RunnableFuture;
 
 public class main extends AppCompatActivity {
 
     Vector sh_lst;
-    Button bt_rct, bt_crc, bt_cls;
-    Spinner spnr_bdr, spnr_fl;
     int bdr, fl;
     Shape sh;
     ShapeFactory sh_fact;
     Context cntx;
-    static TextView txt_vw;
+    static TextView txt_vw, cout;
     public static float width, height;
+    ScrollView scl_vw;
     RelativeLayout sh_lyt;
     String mode;
     ArrayAdapter<CharSequence> adapter;
+    EditText etxt;
+    String usr_in;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,116 +45,62 @@ public class main extends AppCompatActivity {
 
         sh_lyt = (RelativeLayout) findViewById(R.id.rltv_lyt);
         bdr = fl = Color.BLACK;
-
+        etxt = (EditText) findViewById(R.id.cin);
+        bdr = fl = Color.BLACK;
         sh_lst = new Vector();
-        spnr_bdr = (Spinner) findViewById(R.id.spinner_bdr);
-        spnr_fl = (Spinner) findViewById(R.id.spinner_fl);
         adapter = ArrayAdapter.createFromResource(this,
                 R.array.color_arrays, android.R.layout.simple_list_item_1);
 
-        spnr_bdr.setAdapter(adapter);
-        spnr_fl.setAdapter(adapter);
-
-        bt_rct = (Button) findViewById(R.id.btn_rct);
-        bt_crc = (Button) findViewById(R.id.btn_crc);
-        bt_cls = (Button) findViewById(R.id.btn_cls);
-
         cntx = this.getApplicationContext();
         txt_vw = (TextView) findViewById(R.id.textView);
+        cout = (TextView) findViewById(R.id.cout);
+        sh_fact = Factory.get_shape_factory(bdr, fl);
+        scl_vw = (ScrollView) findViewById(R.id.scroller);
 
         mode = "normal";
 
-        bt_rct.setOnClickListener(new View.OnClickListener() {
+        etxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View view) {
-                adjustShapeAlpha();
-                sh = sh_fact.getShape(cntx, ShapeType.Rectangle);
-                sh_lst.add(sh);
-                sh_lyt.addView(sh);
-                updateShapeCount();
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    usr_in = etxt.getText().toString();
+                    etxt.setText("");
+                    //
+                    scl_vw.fullScroll(ScrollView.FOCUS_DOWN);
+                    cout.append(usr_in + "\n> ");
+                    handled = true;
+                }
+                return handled;
             }
         });
 
-        bt_crc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                adjustShapeAlpha();
-                sh = sh_fact.getShape(cntx, ShapeType.Circle);
-                sh_lst.add(sh);
-                sh_lyt.addView(sh);
-                updateShapeCount();
-            }
-        });
-
-        bt_cls.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sh_lst.clear();
-                sh_lyt.removeAllViews();
-                updateShapeCount();
-            }
-        });
-
-        spnr_bdr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView parent, View view, int pos, long id) {
-                bdr = get_color(parent.getItemAtPosition(pos).toString());
-                sh_fact = Factory.get_shape_factory(bdr, fl);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView parent) {
-
-            }
-        });
-
-        spnr_fl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView parent, View view, int pos, long id) {
-                fl = get_color(parent.getItemAtPosition(pos).toString());
-                sh_fact = Factory.get_shape_factory(bdr, fl);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView parent) {
-
-            }
-        });
+        for (int i = 0; i < 10; ++i) {
+            sh = sh_fact.getShape(cntx, ShapeType.Circle);
+            sh_lst.add(sh);
+            sh_lyt.addView(sh);
+            updateShapeCount();
+        }
 
     }
-    
-    int get_color(String s)
-    {
-        if (s.equalsIgnoreCase("blue"))
-            return Color.BLUE;
-        else if (s.equalsIgnoreCase("cyan"))
-            return Color.CYAN;
-        else if (s.equalsIgnoreCase("Dark Gray"))
-            return Color.DKGRAY;
-        else if (s.equalsIgnoreCase("Gray"))
-            return Color.GRAY;
-        else if (s.equalsIgnoreCase("Green"))
-            return Color.GREEN;
-        else if (s.equalsIgnoreCase("Light Gray"))
-            return Color.LTGRAY;
-        else if (s.equalsIgnoreCase("Magenta"))
-            return Color.MAGENTA;
-        else if (s.equalsIgnoreCase("Red"))
-            return Color.RED;
-        else if (s.equalsIgnoreCase("white"))
-            return Color.WHITE;
-        else if (s.equalsIgnoreCase("Yellow"))
-            return Color.YELLOW;
-        return Color.BLACK;
-    }
+
+
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         updateSizeInfo();
     }
     private void updateSizeInfo() {
-        width = sh_lyt.getWidth();
-        height = sh_lyt.getHeight();
+        if (sh_lyt == null)
+            sh_lyt = (RelativeLayout) findViewById(R.id.rltv_lyt);
+        width = sh_lyt.getMeasuredWidth();
+        height = sh_lyt.getMeasuredHeight();
+        if (width == 0)
+            width = 500;
+        if (height == 0)
+            height = 500;
     }
+
     void adjustShapeAlpha() {
         for (int i = 0; i < sh_lst.size(); i++) {
             Shape tmp = (Shape) sh_lst.get(i);
