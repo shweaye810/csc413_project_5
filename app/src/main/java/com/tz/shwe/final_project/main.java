@@ -67,28 +67,28 @@ public class main extends AppCompatActivity {
                     usr_in = etxt.getText().toString();
                     etxt.setText("");
                     //
-                    scl_vw.fullScroll(ScrollView.FOCUS_DOWN);
                     cout.append(usr_in + "\n> ");
                     handled = true;
+                    scl_vw.fullScroll(ScrollView.FOCUS_DOWN);
                 }
                 return handled;
             }
         });
-
+    }
+    private void make_circle() {
         for (int i = 0; i < 10; ++i) {
             sh = sh_fact.getShape(cntx, ShapeType.Circle);
             sh_lst.add(sh);
             sh_lyt.addView(sh);
             updateShapeCount();
         }
-
     }
-
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         updateSizeInfo();
+        make_circle();
     }
     private void updateSizeInfo() {
         if (sh_lyt == null)
