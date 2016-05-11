@@ -1,0 +1,7 @@
+in# android specific files
+*.idea*
+*.gradle*
+*app.iml*
+*cache.xml*
+*local.properties*
+*build*
