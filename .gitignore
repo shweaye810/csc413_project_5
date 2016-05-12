@@ -5,3 +5,4 @@ in# android specific files
 *local.properties*
 *build*
 *.iml
+.*
