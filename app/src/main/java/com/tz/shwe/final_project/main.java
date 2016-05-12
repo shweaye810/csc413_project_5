@@ -19,11 +19,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.view.View;
 
+import java.util.HashSet;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.concurrent.RunnableFuture;
 
 public class main extends AppCompatActivity {
-
+    HashSet<String> set;
     Vector sh_lst;
     int bdr, fl;
     Shape sh;
@@ -37,6 +39,7 @@ public class main extends AppCompatActivity {
     ArrayAdapter<CharSequence> adapter;
     EditText etxt;
     String usr_in;
+    StringTokenizer str_tok;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,8 @@ public class main extends AppCompatActivity {
                     etxt.setText("");
                     //
                     cout.append(usr_in + "\n> ");
+                    parse_expression(usr_in);
+
                     handled = true;
                     scl_vw.fullScroll(ScrollView.FOCUS_DOWN);
                 }
@@ -88,7 +93,6 @@ public class main extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         updateSizeInfo();
-        make_circle();
     }
     private void updateSizeInfo() {
         if (sh_lyt == null)
@@ -99,6 +103,111 @@ public class main extends AppCompatActivity {
             width = 500;
         if (height == 0)
             height = 500;
+    }
+
+    void parse_expression(String s) {
+        str_tok = new StringTokenizer(s);
+        boolean pass = test_user_input();
+
+    }
+
+    boolean is_circle(String s ) {
+        return (s.equalsIgnoreCase("circle") || s.equalsIgnoreCase("circ"));
+    }
+
+    boolean is_rectangle(String s) {
+        return (s.equalsIgnoreCase("rectangle") || s.equalsIgnoreCase("rect"));
+    }
+
+    boolean is_int(String s ) {
+        return s.equalsIgnoreCase("int");
+    }
+    boolean is_keyword(String s) {
+        return is_int(s) || is_circle(s) || is_rectangle(s);
+    }
+
+    boolean has_variable(String s) {
+        return set.contains(s);
+    }
+
+    boolean is_number(String s) {
+        for (int i = 0; i < s.length(); ++i) {
+            if (!Character.isDigit(s[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    String get_token() {
+        if (str_tok.hasMoreTokens()) {
+            return str_tok.nextToken();
+        }
+        return "";
+    }
+
+    boolean is_operator(String s) {
+        return s.equalsIgnoreCase("+") || s.equalsIgnoreCase("-") ||
+                s.equalsIgnoreCase("*") || s.equalsIgnoreCase("/") || s.equalsIgnoreCase("\\");
+    }
+
+    void set_int () {
+        String s = get_token();
+        if (s.equalsIgnoreCase("=")) {
+            int t = get_int();
+        }
+    }
+    int get_int() {
+        String s = get_token();
+        if (has_variable(s)) {
+            String t = get_token();
+            if (t.length() == 0) {
+                return Integer.parseInt(s);
+            } else {
+
+            }
+
+        }
+    }
+    void set_circle() {
+
+    }
+
+    boolean test_expression() {
+        String s = get_token();
+        if (has_variable(s) || is_number(s)) {
+            s = get_token();
+            if (is_operator(s)) {
+                
+            }
+        }
+    }
+
+
+    boolean test_user_input() {
+        String s = get_token();
+
+        if (is_int(s)) {
+            s = get_token();
+            if (s.equalsIgnoreCase("=")) {
+                return test_expression();
+            }
+            return false;
+        } else if (is_circle(s)) {
+
+        } else if (is_rectangle(s)) {
+
+        } else if (set.contains(s)) {
+
+        }
+        /*
+        } else if (is_number(s)) {
+
+        } else if (is_operator(s)) {
+
+        }
+*/
+        return true;
     }
 
     void adjustShapeAlpha() {
