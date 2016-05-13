@@ -138,8 +138,12 @@ public class main extends AppCompatActivity {
         return is_int(s) || is_circle(s) || is_rectangle(s);
     }
 
-    boolean has_variable(String s) {
-        return map.containsKey(s);
+    Int get_variable(Var s) {
+        for (Var key: map.keySet()) {
+            if (key.equalsIgnoreCase(s))
+                return map.get(key);
+        }
+        return null;
     }
 
     boolean is_number(String s) {
@@ -197,8 +201,12 @@ public class main extends AppCompatActivity {
         String s = get_token();
         int l = 0;
         if (is_primary(s)) {
-            if (has_variable(s))
-                l = map.get(s).get();
+            Var tmp = new Var(s);
+            Int x = get_variable(tmp);
+            if (x != null)
+                l = x.get();
+            else
+                throw new Exception("variable " + s + " not found!\n");
         } else if (is_number(s)) {
             l = Integer.parseInt(s);
         }
