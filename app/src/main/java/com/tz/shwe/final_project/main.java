@@ -262,8 +262,9 @@ public class main extends AppCompatActivity {
                 cout.append(x + " " + y + " " + r + " " + s + "\n");
                 circle = sh_fact.getShape(cntx,ShapeType.Circle);
                 sh_lyt.addView(circle);
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
             } catch (Exception e) {
-                cout.append(e.getMessage() +"Usage: circle x y r s\n" );
+                cout.append(e.getMessage() +"Usage: circle x y r  s\n" );
             }
         } else if (is_rectangle(str)) {
             int x, y, x2, y2, s;
@@ -276,6 +277,7 @@ public class main extends AppCompatActivity {
                 cout.append(x + " "  + y + " " +  x2 + " " + y2 + " " + s + "\n");
                 rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
                 sh_lyt.addView(rectangle);
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
