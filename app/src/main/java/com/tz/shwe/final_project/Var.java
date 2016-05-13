@@ -6,5 +6,8 @@ package com.tz.shwe.final_project;
 public class Var extends Ex {
     String name;
     Var(String s) { name = s; }
+    String to_string() {
+        return name;
+    }
 
 }
