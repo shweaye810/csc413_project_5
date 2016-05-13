@@ -131,11 +131,16 @@ public class main extends AppCompatActivity {
         return (s.equalsIgnoreCase("rectangle") || s.equalsIgnoreCase("rect"));
     }
 
+    boolean is_clear(String s)
+    {
+        return (s.equalsIgnoreCase("clear") || s.equalsIgnoreCase("cls"));
+    }
+
     boolean is_int(String s ) {
         return s.equalsIgnoreCase("int");
     }
     boolean is_keyword(String s) {
-        return is_int(s) || is_circle(s) || is_rectangle(s);
+        return is_int(s) || is_circle(s) || is_rectangle(s) || is_clear(s);
     }
 
     Int get_variable(Var s) {
@@ -252,7 +257,11 @@ public class main extends AppCompatActivity {
         Error err = Error.none;
         if (is_int(str)) {
             err = expr_list();
-        } else if (is_circle(str)) {
+        }
+        else if (is_clear(str)){
+            sh_lyt.removeAllViews();
+        }
+        else if (is_circle(str)) {
             int x, y, r, s;
             try {
                 x = get_int();
