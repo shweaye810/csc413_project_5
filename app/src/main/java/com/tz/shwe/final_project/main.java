@@ -147,12 +147,13 @@ public class main extends AppCompatActivity {
     }
 
     boolean is_number(String s) {
-        for (int i = 0; i < s.length(); ++i) {
+        int i;
+        for (i = 0; i < s.length(); ++i) {
             if (!Character.isDigit(s.charAt(i))) {
                 return false;
             }
         }
-        return true;
+        return i > 0 ? true : false;
     }
 
     void set_circle() {
@@ -166,38 +167,24 @@ public class main extends AppCompatActivity {
         return "";
     }
 
-    boolean is_operator(String s) {
-        return s.equalsIgnoreCase("+") || s.equalsIgnoreCase("-") ||
-                s.equalsIgnoreCase("*") || s.equalsIgnoreCase("/") || s.equalsIgnoreCase("\\");
-    }
-/*
+
     void set_int () {
         String s = get_token();
         if (s.equalsIgnoreCase("=")) {
-            int t = get_int();
         }
     }
-    int get_int() {
-        String s = get_token();
-        if (has_variable(s)) {
-            String t = get_token();
-            if (t.length() == 0) {
-                return Integer.parseInt(s);
-            } else {
-
-            }
-
-        }
-    }
-    */
 
     boolean is_primary(String s)
     {
         return ((s.length() > 0) && Character.isLetter(s.charAt(0)));
     }
 
-    int expr() throws Exception {
-        //cout.append("in expr()");
+    int get_int() throws Exception {
+        int l = prim();
+        return l;
+    }
+
+    int prim() throws Exception {
         String s = get_token();
         int l = 0;
         if (is_primary(s)) {
@@ -209,7 +196,13 @@ public class main extends AppCompatActivity {
                 throw new Exception("variable " + s + " not found!\n");
         } else if (is_number(s)) {
             l = Integer.parseInt(s);
+        } else {
+            throw new Exception("Syntax Error\n");
         }
+        return l;
+    }
+    int expr() throws Exception {
+        int l = prim();
         String t = get_token();
         switch (t) {
             case ";":
@@ -232,12 +225,9 @@ public class main extends AppCompatActivity {
         return l;
     }
 
-
     Error expr_list() {
         Error err = Error.none;
-        // cout.append("in expr_map()");
         String s = get_token();
-        // cout.append("s : " + s + ".");
         if (is_primary(s)) {
             String t = get_token();
             if (t.equalsIgnoreCase("=")) {
@@ -258,17 +248,34 @@ public class main extends AppCompatActivity {
 
 
     Error test_user_input() {
-        // cout.append("in text_user_input()");
-        String s = get_token();
-        // cout.append("s : " + s + ".");
+        String str = get_token();
         Error err = Error.none;
-        if (is_int(s)) {
+        if (is_int(str)) {
             err = expr_list();
-        } else if (is_circle(s)) {
-
-        } else if (is_rectangle(s)) {
-
-        } else if (s.equalsIgnoreCase("print")) {
+        } else if (is_circle(str)) {
+            int x, y, r, s;
+            try {
+                x = get_int();
+                y = get_int();
+                r = get_int();
+                s = get_int();
+                cout.append(x + " "  + y + " " +  r + " " + s + "\n");
+            } catch (Exception e) {
+                cout.append(e.getMessage() +"Usage: circle x y r s\n" );
+            }
+        } else if (is_rectangle(str)) {
+            int x, y, x2, y2, s;
+            try {
+                x = get_int();
+                y = get_int();
+                x2 = get_int();
+                y2 = get_int();
+                s = get_int();
+                cout.append(x + " "  + y + " " +  x2 + " " + y2 + " " + s + "\n");
+            } catch (Exception e) {
+                cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
+            }
+        } else if (str.equalsIgnoreCase("print")) {
             for (Var key: map.keySet()) {
                 cout.append(key.to_string() + " " + map.get(key).get() + "\n");
             }
