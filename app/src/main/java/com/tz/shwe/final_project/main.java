@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.concurrent.RunnableFuture;
 
 public class main extends AppCompatActivity {
     HashMap<Var, Int> map;
@@ -78,7 +79,13 @@ public class main extends AppCompatActivity {
 
                     handled = true;
                     cout.append("> ");
-                    scl_vw.fullScroll(ScrollView.FOCUS_DOWN);
+
+                    scl_vw.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            scl_vw.fullScroll(scl_vw.FOCUS_DOWN);
+                        }
+                    });
                 }
                 return handled;
             }
