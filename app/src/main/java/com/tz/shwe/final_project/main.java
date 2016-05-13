@@ -21,11 +21,12 @@ import android.widget.TextView;
 import android.view.View;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 public class main extends AppCompatActivity {
-    HashMap<String, Integer> list;
+    HashMap<Var, Int> map;
     Vector sh_lst;
     int bdr, fl;
     Shape sh;
@@ -62,7 +63,7 @@ public class main extends AppCompatActivity {
         scl_vw = (ScrollView) findViewById(R.id.scroller);
 
         mode = "normal";
-        list = new HashMap<String, Integer>();
+        map = new HashMap<Var, Int>();
 
         etxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -131,7 +132,7 @@ public class main extends AppCompatActivity {
     }
 
     boolean has_variable(String s) {
-        return list.containsKey(s);
+        return map.containsKey(s);
     }
 
     boolean is_number(String s) {
@@ -190,7 +191,7 @@ public class main extends AppCompatActivity {
         int l = 0;
         if (is_primary(s)) {
             if (has_variable(s))
-                l = list.get(s);
+                l = map.get(s).get();
         } else if (is_number(s)) {
             l = Integer.parseInt(s);
         }
@@ -219,7 +220,7 @@ public class main extends AppCompatActivity {
 
     Error expr_list() {
         Error err = Error.none;
-        // cout.append("in expr_list()");
+        // cout.append("in expr_map()");
         String s = get_token();
         // cout.append("s : " + s + ".");
         if (is_primary(s)) {
@@ -227,7 +228,7 @@ public class main extends AppCompatActivity {
             if (t.equalsIgnoreCase("=")) {
                 try {
                     int i = expr();
-                    list.put(s, i);
+                    map.put(new Var(s), new Int(i));
                 } catch (Exception e) {
                     cout.append(e.getMessage());
                 }
@@ -252,6 +253,10 @@ public class main extends AppCompatActivity {
 
         } else if (is_rectangle(s)) {
 
+        } else if (s.equalsIgnoreCase("print")) {
+            for (Var key: map.keySet()) {
+                cout.append(key.to_string() + " " + map.get(key).get() + "\n");
+            }
         } else {
             err = Error.Syntax_error;
         }
