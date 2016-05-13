@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.inputmethodservice.ExtractEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.CharacterPickerDialog;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.ViewTreeObserver;
@@ -19,13 +20,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.view.View;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.concurrent.RunnableFuture;
 
 public class main extends AppCompatActivity {
-    HashSet<String> set;
+    HashMap<String, Integer> list;
     Vector sh_lst;
     int bdr, fl;
     Shape sh;
@@ -40,6 +40,7 @@ public class main extends AppCompatActivity {
     EditText etxt;
     String usr_in;
     StringTokenizer str_tok;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class main extends AppCompatActivity {
         scl_vw = (ScrollView) findViewById(R.id.scroller);
 
         mode = "normal";
+        list = new HashMap<String, Integer>();
 
         etxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -70,16 +72,18 @@ public class main extends AppCompatActivity {
                     usr_in = etxt.getText().toString();
                     etxt.setText("");
                     //
-                    cout.append(usr_in + "\n> ");
+                    cout.append(usr_in + "\n");
                     parse_expression(usr_in);
 
                     handled = true;
+                    cout.append("> ");
                     scl_vw.fullScroll(ScrollView.FOCUS_DOWN);
                 }
                 return handled;
             }
         });
     }
+    /*
     private void make_circle() {
         for (int i = 0; i < 10; ++i) {
             sh = sh_fact.getShape(cntx, ShapeType.Circle);
@@ -89,6 +93,7 @@ public class main extends AppCompatActivity {
         }
     }
 
+*/
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -99,15 +104,14 @@ public class main extends AppCompatActivity {
             sh_lyt = (RelativeLayout) findViewById(R.id.rltv_lyt);
         width = sh_lyt.getMeasuredWidth();
         height = sh_lyt.getMeasuredHeight();
-        if (width == 0)
-            width = 500;
-        if (height == 0)
-            height = 500;
     }
 
     void parse_expression(String s) {
         str_tok = new StringTokenizer(s);
-        boolean pass = test_user_input();
+        Error err = test_user_input();
+        if (err == Error.Syntax_error) {
+            cout.append("Syntax Error\n");
+        }
 
     }
 
@@ -127,16 +131,20 @@ public class main extends AppCompatActivity {
     }
 
     boolean has_variable(String s) {
-        return set.contains(s);
+        return list.containsKey(s);
     }
 
     boolean is_number(String s) {
         for (int i = 0; i < s.length(); ++i) {
-            if (!Character.isDigit(s[i])) {
+            if (!Character.isDigit(s.charAt(i))) {
                 return false;
             }
         }
         return true;
+    }
+
+    void set_circle() {
+
     }
 
     String get_token() {
@@ -150,7 +158,7 @@ public class main extends AppCompatActivity {
         return s.equalsIgnoreCase("+") || s.equalsIgnoreCase("-") ||
                 s.equalsIgnoreCase("*") || s.equalsIgnoreCase("/") || s.equalsIgnoreCase("\\");
     }
-
+/*
     void set_int () {
         String s = get_token();
         if (s.equalsIgnoreCase("=")) {
@@ -169,45 +177,85 @@ public class main extends AppCompatActivity {
 
         }
     }
-    void set_circle() {
+    */
 
+    boolean is_primary(String s)
+    {
+        return ((s.length() > 0) && Character.isLetter(s.charAt(0)));
     }
 
-    boolean test_expression() {
+    int expr() throws Exception {
+        //cout.append("in expr()");
         String s = get_token();
-        if (has_variable(s) || is_number(s)) {
-            s = get_token();
-            if (is_operator(s)) {
-                
-            }
+        int l = 0;
+        if (is_primary(s)) {
+            if (has_variable(s))
+                l = list.get(s);
+        } else if (is_number(s)) {
+            l = Integer.parseInt(s);
         }
+        String t = get_token();
+        switch (t) {
+            case ";":
+                return l;
+            case "+":
+                l += expr();
+                break;
+            case "-":
+                l -= expr();
+                break;
+            case "*":
+                l *= expr();
+                break;
+            case "/":
+                l /= expr();
+                break;
+            default:
+                throw new Exception("Syntax Error\n");
+        }
+        return l;
     }
 
 
-    boolean test_user_input() {
+    Error expr_list() {
+        Error err = Error.none;
+        // cout.append("in expr_list()");
         String s = get_token();
-
-        if (is_int(s)) {
-            s = get_token();
-            if (s.equalsIgnoreCase("=")) {
-                return test_expression();
+        // cout.append("s : " + s + ".");
+        if (is_primary(s)) {
+            String t = get_token();
+            if (t.equalsIgnoreCase("=")) {
+                try {
+                    int i = expr();
+                    list.put(s, i);
+                } catch (Exception e) {
+                    cout.append(e.getMessage());
+                }
+            } else {
+                err = Error.Syntax_error;
             }
-            return false;
+        } else {
+            err = Error.Syntax_error;
+        }
+        return err;
+    }
+
+
+    Error test_user_input() {
+        // cout.append("in text_user_input()");
+        String s = get_token();
+        // cout.append("s : " + s + ".");
+        Error err = Error.none;
+        if (is_int(s)) {
+            err = expr_list();
         } else if (is_circle(s)) {
 
         } else if (is_rectangle(s)) {
 
-        } else if (set.contains(s)) {
-
+        } else {
+            err = Error.Syntax_error;
         }
-        /*
-        } else if (is_number(s)) {
-
-        } else if (is_operator(s)) {
-
-        }
-*/
-        return true;
+        return err;
     }
 
     void adjustShapeAlpha() {
