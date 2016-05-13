@@ -8,4 +8,5 @@ public class Int extends Ex{
     Int(int v) {
         val = v;
     }
+    int get() { return val; }
 }
