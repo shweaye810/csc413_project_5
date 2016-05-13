@@ -28,8 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignLeft="@+id/textView"
-        android:layout_below="@+id/textView"
-        android:layout_above="@+id/relativeLayout">
+        android:layout_below="@+id/textView">
 
     </RelativeLayout>
 

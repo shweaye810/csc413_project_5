@@ -30,7 +30,7 @@ public class main extends AppCompatActivity {
     HashMap<Var, Int> map;
     Vector sh_lst;
     int bdr, fl;
-    Shape sh;
+    Shape circle, rectangle;
     ShapeFactory sh_fact;
     Context cntx;
     static TextView txt_vw, cout;
@@ -259,7 +259,9 @@ public class main extends AppCompatActivity {
                 y = get_int();
                 r = get_int();
                 s = get_int();
-                cout.append(x + " "  + y + " " +  r + " " + s + "\n");
+                cout.append(x + " " + y + " " + r + " " + s + "\n");
+                circle = sh_fact.getShape(cntx,ShapeType.Circle);
+                sh_lyt.addView(circle);
             } catch (Exception e) {
                 cout.append(e.getMessage() +"Usage: circle x y r s\n" );
             }
@@ -272,6 +274,8 @@ public class main extends AppCompatActivity {
                 y2 = get_int();
                 s = get_int();
                 cout.append(x + " "  + y + " " +  x2 + " " + y2 + " " + s + "\n");
+                rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
+                sh_lyt.addView(rectangle);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
