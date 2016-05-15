@@ -260,6 +260,7 @@ public class main extends AppCompatActivity {
         }
         else if (is_clear(str)){
             sh_lyt.removeAllViews();
+            map.clear();
         }
         else if (is_circle(str)) {
             int x, y, r, s;
@@ -270,10 +271,12 @@ public class main extends AppCompatActivity {
                 s = get_int();
                 cout.append(x + " " + y + " " + r + " " + s + "\n");
                 circle = sh_fact.getShape(cntx,ShapeType.Circle);
+                Circle.setRadius(r);
+                Circle.setLocation(x, y);
                 sh_lyt.addView(circle);
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
             } catch (Exception e) {
-                cout.append(e.getMessage() +"Usage: circle x y r  s\n" );
+                cout.append(e.getMessage() +"Usage: circle x y r  s\n");
             }
         } else if (is_rectangle(str)) {
             int x, y, x2, y2, s;

@@ -10,8 +10,8 @@ import java.util.Random;
  * Created by blo on 3/24/16.
  */
 public class Circle extends Shape {
-    private int mPivotX, mPivotY, a;
-    private float radius;
+    private static int mPivotX, mPivotY, a;
+    private static int radius;
 
     protected Circle(Context cnxt, int border, int fill) {
         super(cnxt, border, fill);
@@ -28,10 +28,10 @@ public class Circle extends Shape {
         cnv.drawCircle(x, y, r, pnt);
     }*/
 
-    public void setRadius()
+    public static void setRadius(int r)
     {
         //Generate random numbers for center point and radius of the circle
-        radius = (1 + (float) Math.random()) * 50;
+        /*radius = (1 + (float) Math.random()) * 50;
         a = 100;
         int minX = a * 2;
         int maxX = getWidth() - (a*2);
@@ -41,7 +41,14 @@ public class Circle extends Shape {
 
         Random random = new Random();
         mPivotX = random.nextInt(maxX - minX + 1) + minX;
-        mPivotY = random.nextInt(maxY - minY + 1) + minY;
+        mPivotY = random.nextInt(maxY - minY + 1) + minY;*/
+        //radius = 100;
+    }
+
+    public static void setLocation(int x, int y)
+    {
+        //mPivotX = 100;
+        //mPivotY = 100;
     }
 
     protected ShapeType getShapeType() {
@@ -50,7 +57,8 @@ public class Circle extends Shape {
 
     @Override
     public void onDraw(Canvas canvas) {
-        setRadius();
+        //setRadius(radius);
+        //setLocation(mPivotX,mPivotY);
         pnt.setStyle(Paint.Style.FILL);
         pnt.setColor(getColor(fl));
         canvas.drawCircle(mPivotX, mPivotY, radius, pnt);

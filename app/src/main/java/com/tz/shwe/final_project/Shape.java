@@ -79,3 +79,4 @@ public abstract class Shape extends View {
         r = (r * a + min);
     }*/
 }
+
