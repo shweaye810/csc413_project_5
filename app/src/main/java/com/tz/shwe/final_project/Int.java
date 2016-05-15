@@ -9,4 +9,7 @@ public class Int extends Ex{
         val = v;
     }
     int get() { return val; }
+    void set(int v) {
+        val = v;
+    }
 }

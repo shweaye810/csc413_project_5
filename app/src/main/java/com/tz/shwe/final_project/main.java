@@ -30,7 +30,7 @@ public class main extends AppCompatActivity {
     HashMap<Var, Int> map;
     Vector sh_lst;
     int bdr, fl;
-    Shape circle, rectangle;
+    Shape sh;
     ShapeFactory sh_fact;
     Context cntx;
     static TextView txt_vw, cout;
@@ -40,7 +40,7 @@ public class main extends AppCompatActivity {
     String mode;
     ArrayAdapter<CharSequence> adapter;
     EditText etxt;
-    String usr_in;
+    String usr_in, crt_tok, s_tok;
     StringTokenizer str_tok;
 
 
@@ -53,7 +53,7 @@ public class main extends AppCompatActivity {
         etxt = (EditText) findViewById(R.id.cin);
         sh_lst = new Vector();
         adapter = ArrayAdapter.createFromResource(this,
-                R.array.color_arrays, android.R.layout.simple_list_item_1);
+                                                  R.array.color_arrays, android.R.layout.simple_list_item_1);
 
         cntx = this.getApplicationContext();
         txt_vw = (TextView) findViewById(R.id.textView);
@@ -65,29 +65,29 @@ public class main extends AppCompatActivity {
         map = new HashMap<Var, Int>();
 
         etxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    usr_in = etxt.getText().toString();
-                    etxt.setText("");
-                    //
-                    cout.append(usr_in + "\n");
-                    parse_expression(usr_in);
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    boolean handled = false;
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        usr_in = etxt.getText().toString();
+                        etxt.setText("");
+                        //
+                        cout.append(usr_in + "\n");
+                        parse_expression(usr_in);
 
-                    handled = true;
-                    cout.append("> ");
+                        handled = true;
+                        cout.append("> ");
 
-                    scl_vw.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            scl_vw.fullScroll(scl_vw.FOCUS_DOWN);
-                        }
-                    });
+                        scl_vw.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    scl_vw.fullScroll(scl_vw.FOCUS_DOWN);
+                                }
+                            });
+                    }
+                    return handled;
                 }
-                return handled;
-            }
-        });
+            });
     }
 
     @Override
@@ -104,11 +104,11 @@ public class main extends AppCompatActivity {
 
     void parse_expression(String s) {
         str_tok = new StringTokenizer(s);
-        Error err = test_user_input();
-        if (err == Error.Syntax_error) {
-            cout.append("Syntax Error\n");
+        try {
+            test_user_input();
+        } catch (Exception e) {
+            cout.append(e.getMessage());
         }
-
     }
 
     boolean is_circle(String s ) {
@@ -149,19 +149,13 @@ public class main extends AppCompatActivity {
         return i > 0 ? true : false;
     }
 
-    String get_token() {
+    void get_token() {
+        crt_tok = "";
         if (str_tok.hasMoreTokens()) {
-            return str_tok.nextToken();
-        }
-        return "";
-    }
-
-
-    void set_int () {
-        String s = get_token();
-        if (s.equalsIgnoreCase("=")) {
+            crt_tok = str_tok.nextToken();
         }
     }
+
 
     boolean is_primary(String s)
     {
@@ -174,79 +168,107 @@ public class main extends AppCompatActivity {
     }
 
     int prim() throws Exception {
-        String s = get_token();
+        get_token();
         int l = 0;
-        if (is_primary(s)) {
-            Var tmp = new Var(s);
+        if (is_primary(crt_tok)) {
+            Var tmp = new Var(crt_tok);
             Int x = get_variable(tmp);
             if (x != null)
                 l = x.get();
             else
-                throw new Exception("variable " + s + " not found!\n");
-        } else if (is_number(s)) {
-            l = Integer.parseInt(s);
+                throw new Exception("variable " + crt_tok + " not found!\n");
+        } else if (is_number(crt_tok)) {
+            l = Integer.parseInt(crt_tok);
+        } else if (crt_tok.equalsIgnoreCase("(")) {
+            l = paren_expr();
         } else {
-            throw new Exception("Syntax Error\n");
+            throw new Exception("Syntax Error. Usage: int x = 0 ;\n");
         }
         return l;
     }
-    int expr() throws Exception {
+    int paren_expr() throws Exception {
+        int v = expr();
+        if (!crt_tok.equalsIgnoreCase(")")) {
+            throw new Exception("Syntax Error. Expected ')'\n");
+        }
+        return v;
+    }
+    int term() throws Exception {
         int l = prim();
-        String t = get_token();
-        switch (t) {
-            case ";":
-                return l;
-            case "+":
-                l += expr();
-                break;
-            case "-":
-                l -= expr();
-                break;
+        while (true) {
+            get_token();
+            switch (crt_tok) {
             case "*":
-                l *= expr();
+                l *= prim();
                 break;
             case "/":
-                l /= expr();
+                int d = prim();
+                if (d != 0) {
+                    l /= d;
+                    break;
+                };
+                throw new Exception("Can't divide by 0\n");
+            default:
+                return l;
+            }
+        }
+    }
+
+    int expr() throws Exception {
+        int l = term();
+        while (true) {
+            switch (crt_tok) {
+            case "+":
+                l += term();
+                break;
+            case "-":
+                l -= term();
                 break;
             default:
-                throw new Exception("Syntax Error\n");
+                return l;
+            }
         }
-        return l;
     }
 
-    Error expr_list() {
-        Error err = Error.none;
-        String s = get_token();
-        if (is_primary(s)) {
-            String t = get_token();
-            if (t.equalsIgnoreCase("=")) {
-                try {
-                    int i = expr();
-                    map.put(new Var(s), new Int(i));
-                } catch (Exception e) {
-                    cout.append(e.getMessage());
-                }
+    void expr_list(boolean to_dcl) throws Exception {
+        if (to_dcl)
+            get_token();
+        String s = crt_tok;
+        get_token();
+        if (is_primary(s) && crt_tok.equalsIgnoreCase("=")) {
+            Int t = get_variable(new Var(s));
+            if (t == null && !to_dcl) {
+                throw new Exception("Variable's not declared!\n");
+            } else if (t != null && to_dcl) {
+                throw new Exception("Variable exist!\n");
+            }
+            int i = expr();
+            if (!crt_tok.equalsIgnoreCase(";")) {
+                throw new Exception("Syntax Error. Expected ';'\n");
+            }
+
+            if (!to_dcl) {
+                t.set(i);
             } else {
-                err = Error.Syntax_error;
+                map.put(new Var(s), new Int(i));
             }
         } else {
-            err = Error.Syntax_error;
+            throw new Exception("Syntax Error. Usage: int x = 0 ;\n");
         }
-        return err;
     }
 
+    void test_user_input() throws Exception{
 
-    Error test_user_input() {
-        String str = get_token();
-        Error err = Error.none;
-        if (is_int(str)) {
-            err = expr_list();
-        }
-        else if (is_clear(str)){
-            sh_lyt.removeAllViews();
-            map.clear();
-        }
-        else if (is_circle(str)) {
+        get_token();
+        if (crt_tok == null) {
+            return;
+        } else if (is_int(crt_tok)) {
+            try {
+                expr_list(true);
+            } catch (Exception e) {
+                cout.append(e.getMessage());
+            }
+        } else if (is_circle(crt_tok)) {
             int x, y, r, s;
             try {
                 x = get_int();
@@ -254,18 +276,17 @@ public class main extends AppCompatActivity {
                 r = get_int();
                 s = get_int();
                 cout.append(x + " " + y + " " + r + " " + s + "\n");
-                sh_fact = AbstractShapeFactory.getShapeFactory(s);
                 adjustShapeAlpha();
-                circle = sh_fact.getShape(cntx,ShapeType.Circle);
-                sh_lst.add(circle);
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
+                sh = sh_fact.getShape(cntx,ShapeType.Circle);
                 Circle.setRadius(r);
                 Circle.setLocation(x, y);
-                sh_lyt.addView(circle);
-                updateShapeCount();
+                sh_lst.add(sh);
+                sh_lyt.addView(sh);
             } catch (Exception e) {
-                cout.append(e.getMessage() +"Usage: circle x y r s\n");
+                cout.append(e.getMessage() + "Usage: circle x y r s\n" );
             }
-        } else if (is_rectangle(str)) {
+        } else if (is_rectangle(crt_tok)) {
             int x, y, x1, y1, s;
             try {
                 x = get_int();
@@ -274,24 +295,27 @@ public class main extends AppCompatActivity {
                 y1 = get_int();
                 s = get_int();
                 cout.append(x + " " + y + " " + x1 + " " + y1 + " " + s + "\n");
-                sh_fact = AbstractShapeFactory.getShapeFactory(s);
                 adjustShapeAlpha();
-                rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
-                sh_lst.add(rectangle);
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
                 Rectangle.setRectXY(x,y,x1,y1);
-                sh_lyt.addView(rectangle);
                 updateShapeCount();
+                sh = sh_fact.getShape(cntx, ShapeType.Rectangle);
+                sh_lst.add(sh);
+                sh_lyt.addView(sh);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
-        } else if (str.equalsIgnoreCase("print")) {
+        } else if (crt_tok.equalsIgnoreCase("print")) {
             for (Var key: map.keySet()) {
                 cout.append(key.to_string() + " = " + map.get(key).get() + "\n");
             }
         } else {
-            err = Error.Syntax_error;
+            try {
+                expr_list(false);
+            } catch (Exception e) {
+                cout.append(e.getMessage());
+            }
         }
-        return err;
     }
 
     //fading animation: setting alpha to a translucent value (0 < alpha < 1)
