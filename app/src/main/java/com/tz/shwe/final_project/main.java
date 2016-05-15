@@ -255,10 +255,13 @@ public class main extends AppCompatActivity {
                 s = get_int();
                 cout.append(x + " " + y + " " + r + " " + s + "\n");
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
+                adjustShapeAlpha();
                 circle = sh_fact.getShape(cntx,ShapeType.Circle);
+                sh_lst.add(circle);
                 Circle.setRadius(r);
                 Circle.setLocation(x, y);
                 sh_lyt.addView(circle);
+                updateShapeCount();
             } catch (Exception e) {
                 cout.append(e.getMessage() +"Usage: circle x y r s\n");
             }
@@ -272,9 +275,12 @@ public class main extends AppCompatActivity {
                 s = get_int();
                 cout.append(x + " " + y + " " + x1 + " " + y1 + " " + s + "\n");
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
+                adjustShapeAlpha();
                 rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
+                sh_lst.add(rectangle);
                 Rectangle.setRectXY(x,y,x1,y1);
                 sh_lyt.addView(rectangle);
+                updateShapeCount();
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
@@ -286,5 +292,38 @@ public class main extends AppCompatActivity {
             err = Error.Syntax_error;
         }
         return err;
+    }
+
+    //fading animation: setting alpha to a translucent value (0 < alpha < 1)
+    void  adjustShapeAlpha(){
+        int i = 0;
+        while (i < sh_lst.size()){
+            Shape tmpShape = (Shape) sh_lst.get(i);
+            if (tmpShape.getShapeAlpha() > 0.0f){
+                tmpShape.setShapeAlpha(tmpShape.getShapeAlpha()- 0.1f);
+            }
+            else {
+                tmpShape.removeShape();
+                sh_lst.remove(i);
+            }
+            i++;
+        }
+    }
+
+    //shape counter
+    void updateShapeCount(){
+        int noOfRectangle = 0, noOfCircle = 0, i = 0;
+        while (i < sh_lst.size()){
+            Shape tmpShape = (Shape) sh_lst.get(i);
+            ShapeType shType = tmpShape.getShapeType();
+            if (shType == ShapeType.Circle) {
+                noOfCircle++;
+            }
+            else if (shType == ShapeType.Rectangle){
+                noOfRectangle++;
+            }
+            i++;
+        }
+        txt_vw.setText("Circle: " + noOfCircle + "\tRectangle: " + noOfRectangle);
     }
 }
