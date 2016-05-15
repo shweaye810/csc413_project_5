@@ -30,7 +30,7 @@ public class main extends AppCompatActivity {
     HashMap<Var, Int> map;
     Vector sh_lst;
     int bdr, fl;
-    Shape circle, rectangle;
+    Shape sh;
     ShapeFactory sh_fact;
     Context cntx;
     static TextView txt_vw, cout;
@@ -161,10 +161,6 @@ public class main extends AppCompatActivity {
         return i > 0 ? true : false;
     }
 
-    void set_circle() {
-
-    }
-
     void get_token() {
         if (str_tok.hasMoreTokens()) {
             crt_tok = str_tok.nextToken();
@@ -280,11 +276,12 @@ public class main extends AppCompatActivity {
                 r = get_int();
                 s = get_int();
                 cout.append(x + " " + y + " " + r + " " + s + "\n");
-                circle = sh_fact.getShape(cntx,ShapeType.Circle);
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
+                sh = sh_fact.getShape(cntx,ShapeType.Circle);
                 Circle.setRadius(r);
                 Circle.setLocation(x, y);
-                sh_lyt.addView(circle);
-                sh_fact = AbstractShapeFactory.getShapeFactory(s);
+                sh_lst.add(sh);
+                sh_lyt.addView(sh);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: circle x y r s\n" );
             }
@@ -297,9 +294,10 @@ public class main extends AppCompatActivity {
                 y2 = get_int();
                 s = get_int();
                 cout.append(x + " "  + y + " " +  x2 + " " + y2 + " " + s + "\n");
-                rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
-                sh_lyt.addView(rectangle);
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
+                sh = sh_fact.getShape(cntx, ShapeType.Rectangle);
+                sh_lst.add(sh);
+                sh_lyt.addView(sh);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
