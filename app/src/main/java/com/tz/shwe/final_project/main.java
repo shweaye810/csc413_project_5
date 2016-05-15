@@ -30,7 +30,7 @@ public class main extends AppCompatActivity {
     HashMap<Var, Int> map;
     Vector sh_lst;
     int bdr, fl;
-    Shape sh;
+    Shape circle, rectangle;
     ShapeFactory sh_fact;
     Context cntx;
     static TextView txt_vw, cout;
@@ -131,11 +131,16 @@ public class main extends AppCompatActivity {
         return (s.equalsIgnoreCase("rectangle") || s.equalsIgnoreCase("rect"));
     }
 
+    boolean is_clear(String s)
+    {
+        return (s.equalsIgnoreCase("clear") || s.equalsIgnoreCase("cls"));
+    }
+
     boolean is_int(String s ) {
         return s.equalsIgnoreCase("int");
     }
     boolean is_keyword(String s) {
-        return is_int(s) || is_circle(s) || is_rectangle(s);
+        return is_int(s) || is_circle(s) || is_rectangle(s) || is_clear(s);
     }
 
     Int get_variable(Var s) {
@@ -274,7 +279,12 @@ public class main extends AppCompatActivity {
                 y = get_int();
                 r = get_int();
                 s = get_int();
-                cout.append(x + " "  + y + " " +  r + " " + s + "\n");
+                cout.append(x + " " + y + " " + r + " " + s + "\n");
+                circle = sh_fact.getShape(cntx,ShapeType.Circle);
+                Circle.setRadius(r);
+                Circle.setLocation(x, y);
+                sh_lyt.addView(circle);
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: circle x y r s\n" );
             }
@@ -287,12 +297,15 @@ public class main extends AppCompatActivity {
                 y2 = get_int();
                 s = get_int();
                 cout.append(x + " "  + y + " " +  x2 + " " + y2 + " " + s + "\n");
+                rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
+                sh_lyt.addView(rectangle);
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
         } else if (crt_tok.equalsIgnoreCase("print")) {
             for (Var key: map.keySet()) {
-                cout.append(key.to_string() + " " + map.get(key).get() + "\n");
+                cout.append(key.to_string() + " = " + map.get(key).get() + "\n");
             }
         } else {
             throw new Exception("Syntax Error\n");
