@@ -228,8 +228,6 @@ public class main extends AppCompatActivity {
         int l = term();
         while (true) {
             switch (crt_tok) {
-            case ";":
-                return l;
             case "+":
                 l += term();
                 break;
@@ -250,6 +248,9 @@ public class main extends AppCompatActivity {
             if (crt_tok.equalsIgnoreCase("=")) {
                 try {
                     int i = expr();
+                    if (!crt_tok.equalsIgnoreCase(";")) {
+                        throw new Exception("Syntax Error\n");
+                    }
                     map.put(new Var(s), new Int(i));
                 } catch (Exception e) {
                     cout.append(e.getMessage());
