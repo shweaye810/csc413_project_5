@@ -241,19 +241,24 @@ public class main extends AppCompatActivity {
         }
     }
 
-    void expr_list() throws Exception {
+    void expr_list(boolean to_dcl) throws Exception {
         get_token();
         String s = crt_tok;
         get_token();
         if (is_primary(s) && crt_tok.equalsIgnoreCase("=")) {
-            try {
-                int i = expr();
-                if (!crt_tok.equalsIgnoreCase(";")) {
-                    throw new Exception("Syntax Error\n");
+            int i = expr();
+            if (!crt_tok.equalsIgnoreCase(";")) {
+                throw new Exception("Syntax Error. Expected ';'\n");
+            }
+
+            if (!to_dcl) {
+                Int t = get_variable(new Var(s));
+                if (t == null) {
+                    throw new Exception("Variable's not declared!\n");
                 }
+                t.set(i);
+            } else {
                 map.put(new Var(s), new Int(i));
-            } catch (Exception e) {
-                cout.append(e.getMessage());
             }
         } else {
             throw new Exception("Syntax Error\n");
@@ -264,7 +269,7 @@ public class main extends AppCompatActivity {
         get_token();
         if (is_int(crt_tok)) {
             try {
-                expr_list();
+                expr_list(true);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: int x = 0 ;\n");
             }
@@ -304,6 +309,12 @@ public class main extends AppCompatActivity {
         } else if (crt_tok.equalsIgnoreCase("print")) {
             for (Var key: map.keySet()) {
                 cout.append(key.to_string() + " = " + map.get(key).get() + "\n");
+            }
+        } else if (is_primary(crt_tok)) {
+            try {
+                expr_list(false);
+            } catch (Exception e) {
+                cout.append(e.getMessage());
             }
         } else {
             throw new Exception("Syntax Error\n");
