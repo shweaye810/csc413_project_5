@@ -42,13 +42,13 @@ public class Circle extends Shape {
         Random random = new Random();
         mPivotX = random.nextInt(maxX - minX + 1) + minX;
         mPivotY = random.nextInt(maxY - minY + 1) + minY;*/
-        //radius = 100;
+        radius = 100;
     }
 
     public static void setLocation(int x, int y)
     {
-        //mPivotX = 100;
-        //mPivotY = 100;
+        mPivotX = 100;
+        mPivotY = 100;
     }
 
     protected ShapeType getShapeType() {

@@ -295,7 +295,7 @@ public class main extends AppCompatActivity {
             }
         } else if (str.equalsIgnoreCase("print")) {
             for (Var key: map.keySet()) {
-                cout.append(key.to_string() + " " + map.get(key).get() + "\n");
+                cout.append(key.to_string() + " = " + map.get(key).get() + "\n");
             }
         } else {
             err = Error.Syntax_error;
