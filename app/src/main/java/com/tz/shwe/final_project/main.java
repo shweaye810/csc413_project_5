@@ -162,6 +162,7 @@ public class main extends AppCompatActivity {
     }
 
     void get_token() {
+        crt_tok = "";
         if (str_tok.hasMoreTokens()) {
             crt_tok = str_tok.nextToken();
         }
@@ -169,9 +170,9 @@ public class main extends AppCompatActivity {
 
 
     boolean is_primary(String s)
-        {
-            return ((s.length() > 0) && Character.isLetter(s.charAt(0)));
-        }
+    {
+        return ((s.length() > 0) && Character.isLetter(s.charAt(0)));
+    }
 
     int get_int() throws Exception {
         int l = prim();
@@ -193,7 +194,7 @@ public class main extends AppCompatActivity {
         } else if (crt_tok.equalsIgnoreCase("(")) {
             l = paren_expr();
         } else {
-            throw new Exception("Syntax Error\n");
+            throw new Exception("Syntax Error. Usage: int x = 0 ;\n");
         }
         return l;
     }
@@ -242,36 +243,42 @@ public class main extends AppCompatActivity {
     }
 
     void expr_list(boolean to_dcl) throws Exception {
-        get_token();
+        if (to_dcl)
+            get_token();
         String s = crt_tok;
         get_token();
         if (is_primary(s) && crt_tok.equalsIgnoreCase("=")) {
+            Int t = get_variable(new Var(s));
+            if (t == null && !to_dcl) {
+                throw new Exception("Variable's not declared!\n");
+            } else if (t != null && to_dcl) {
+                throw new Exception("Variable exist!\n");
+            }
             int i = expr();
             if (!crt_tok.equalsIgnoreCase(";")) {
                 throw new Exception("Syntax Error. Expected ';'\n");
             }
 
             if (!to_dcl) {
-                Int t = get_variable(new Var(s));
-                if (t == null) {
-                    throw new Exception("Variable's not declared!\n");
-                }
                 t.set(i);
             } else {
                 map.put(new Var(s), new Int(i));
             }
         } else {
-            throw new Exception("Syntax Error\n");
+            throw new Exception("Syntax Error. Usage: int x = 0 ;\n");
         }
     }
 
     void test_user_input() throws Exception{
+
         get_token();
-        if (is_int(crt_tok)) {
+        if (crt_tok == null) {
+            return;
+        } else if (is_int(crt_tok)) {
             try {
                 expr_list(true);
             } catch (Exception e) {
-                cout.append(e.getMessage() + "Usage: int x = 0 ;\n");
+                cout.append(e.getMessage());
             }
         } else if (is_circle(crt_tok)) {
             int x, y, r, s;
@@ -310,14 +317,12 @@ public class main extends AppCompatActivity {
             for (Var key: map.keySet()) {
                 cout.append(key.to_string() + " = " + map.get(key).get() + "\n");
             }
-        } else if (is_primary(crt_tok)) {
+        } else {
             try {
                 expr_list(false);
             } catch (Exception e) {
                 cout.append(e.getMessage());
             }
-        } else {
-            throw new Exception("Syntax Error\n");
         }
     }
 
