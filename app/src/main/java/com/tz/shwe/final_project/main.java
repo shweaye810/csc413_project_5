@@ -176,7 +176,7 @@ public class main extends AppCompatActivity {
             if (x != null)
                 l = x.get();
             else
-                throw new Exception("variable " + crt_tok + " not found!\n");
+                throw new Exception("Variable " + crt_tok + " is not found!\n");
         } else if (is_number(crt_tok)) {
             l = Integer.parseInt(crt_tok);
         } else if (crt_tok.equalsIgnoreCase("(")) {
