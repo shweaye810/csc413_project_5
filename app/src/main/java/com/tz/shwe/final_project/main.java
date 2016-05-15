@@ -268,7 +268,15 @@ public class main extends AppCompatActivity {
             } catch (Exception e) {
                 cout.append(e.getMessage());
             }
-        } else if (is_circle(crt_tok)) {
+        }
+        else if (is_clear(crt_tok)){
+            sh_lyt.removeAllViews();
+            sh_lst.clear();
+            updateShapeCount();
+            map.clear();
+            cout.setText("");
+        }
+        else if (is_circle(crt_tok)) {
             int x, y, r, s;
             try {
                 x = get_int();
@@ -287,7 +295,8 @@ public class main extends AppCompatActivity {
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: circle x y r s\n" );
             }
-        } else if (is_rectangle(crt_tok)) {
+        }
+        else if (is_rectangle(crt_tok)) {
             int x, y, x1, y1, s;
             try {
                 x = get_int();
@@ -306,11 +315,13 @@ public class main extends AppCompatActivity {
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
-        } else if (crt_tok.equalsIgnoreCase("print")) {
+        }
+        else if (crt_tok.equalsIgnoreCase("print")) {
             for (Var key: map.keySet()) {
                 cout.append(key.to_string() + " = " + map.get(key).get() + "\n");
             }
-        } else {
+        }
+        else {
             try {
                 expr_list(false);
             } catch (Exception e) {
