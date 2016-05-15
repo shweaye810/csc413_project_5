@@ -243,20 +243,16 @@ public class main extends AppCompatActivity {
     void expr_list() throws Exception {
         get_token();
         String s = crt_tok;
-        if (is_primary(s)) {
-            get_token();
-            if (crt_tok.equalsIgnoreCase("=")) {
-                try {
-                    int i = expr();
-                    if (!crt_tok.equalsIgnoreCase(";")) {
-                        throw new Exception("Syntax Error\n");
-                    }
-                    map.put(new Var(s), new Int(i));
-                } catch (Exception e) {
-                    cout.append(e.getMessage());
+        get_token();
+        if (is_primary(s) && crt_tok.equalsIgnoreCase("=")) {
+            try {
+                int i = expr();
+                if (!crt_tok.equalsIgnoreCase(";")) {
+                    throw new Exception("Syntax Error\n");
                 }
-            } else {
-                throw new Exception("Syntax Error\n");
+                map.put(new Var(s), new Int(i));
+            } catch (Exception e) {
+                cout.append(e.getMessage());
             }
         } else {
             throw new Exception("Syntax Error\n");
