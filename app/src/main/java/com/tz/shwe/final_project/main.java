@@ -194,7 +194,6 @@ public class main extends AppCompatActivity {
         } else {
             throw new Exception("Syntax Error\n");
         }
-        get_token();
         return l;
     }
     int paren_expr() throws Exception {
@@ -207,6 +206,7 @@ public class main extends AppCompatActivity {
     int term() throws Exception {
         int l = prim();
         while (true) {
+            get_token();
             switch (crt_tok) {
             case "*":
                 l *= prim();
