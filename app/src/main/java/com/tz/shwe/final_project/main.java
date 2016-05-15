@@ -278,10 +278,11 @@ public class main extends AppCompatActivity {
                 cout.append(x + " " + y + " " + r + " " + s + "\n");
                 adjustShapeAlpha();
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
-                sh = sh_fact.getShape(cntx,ShapeType.Circle);
+                sh = sh_fact.getShape(cntx, ShapeType.Circle);
                 Circle.setRadius(r);
                 Circle.setLocation(x, y);
                 sh_lst.add(sh);
+                updateShapeCount();
                 sh_lyt.addView(sh);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: circle x y r s\n" );
@@ -297,10 +298,10 @@ public class main extends AppCompatActivity {
                 cout.append(x + " " + y + " " + x1 + " " + y1 + " " + s + "\n");
                 adjustShapeAlpha();
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
-                Rectangle.setRectXY(x,y,x1,y1);
-                updateShapeCount();
+                Rectangle.setRectXY(x, y, x1, y1);
                 sh = sh_fact.getShape(cntx, ShapeType.Rectangle);
                 sh_lst.add(sh);
+                updateShapeCount();
                 sh_lyt.addView(sh);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
