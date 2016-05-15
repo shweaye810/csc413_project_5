@@ -9,35 +9,31 @@ import android.view.View;
 /**
  * Created by blo on 3/24/16.
  */
-public abstract class Shape extends View {
-    protected float x, y, r, a, rad, width, height, min;
-    //final int sz;
+public abstract class Shape extends View
+{
     protected Paint pnt;
     protected int fl, bdr;
 
-    protected Shape(Context context, int border, int fill) {
+    protected Shape(Context context, int border, int fill)
+    {
         super(context);
         pnt = new Paint();
-        /*sz = 50;
-        rad = 1;
-        x = (float) Math.random();
-        y = (float) Math.random();
-        r = (float) Math.random() / rad;
-        width = main.width - sz * 2;
-        height = main.height - sz * 2;
-        min = 30;
-        set_value();*/
         bdr = border;
         fl = fill;
     }
-    protected void setShapeAlpha(float alpha) {
+
+    protected void setShapeAlpha(float alpha)
+    {
         this.setAlpha(alpha);
     }
-    protected float getShapeAlpha() {
+
+    protected float getShapeAlpha()
+    {
         return getAlpha();
     }
 
-    protected void removeShape() {
+    protected void removeShape()
+    {
         this.setVisibility(View.GONE);
     }
 
@@ -46,8 +42,10 @@ public abstract class Shape extends View {
     @Override
     protected abstract void onDraw(Canvas cnv);
 
-    public static int getColor(int color){
-        switch (color){
+    public static int getColor(int color)
+    {
+        switch (color)
+        {
             case 0:
                 return Color.BLACK;
             case 1:
@@ -71,12 +69,5 @@ public abstract class Shape extends View {
         }
         return Color.BLACK;
     }
-
-    /*protected void set_value() {
-        a = (float) Math.sqrt(width * height / 50);
-        x = (x * width + sz);
-        y = (y * height + sz);
-        r = (r * a + min);
-    }*/
 }
 

@@ -50,9 +50,7 @@ public class main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sh_lyt = (RelativeLayout) findViewById(R.id.rltv_lyt);
-        bdr = fl = Color.BLACK;
         etxt = (EditText) findViewById(R.id.cin);
-        bdr = fl = Color.BLACK;
         sh_lst = new Vector();
         adapter = ArrayAdapter.createFromResource(this,
                 R.array.color_arrays, android.R.layout.simple_list_item_1);
@@ -91,17 +89,7 @@ public class main extends AppCompatActivity {
             }
         });
     }
-    /*
-    private void make_circle() {
-        for (int i = 0; i < 10; ++i) {
-            sh = sh_fact.getShape(cntx, ShapeType.Circle);
-            sh_lst.add(sh);
-            sh_lyt.addView(sh);
-            updateShapeCount();
-        }
-    }
 
-*/
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -159,10 +147,6 @@ public class main extends AppCompatActivity {
             }
         }
         return i > 0 ? true : false;
-    }
-
-    void set_circle() {
-
     }
 
     String get_token() {
@@ -270,26 +254,27 @@ public class main extends AppCompatActivity {
                 r = get_int();
                 s = get_int();
                 cout.append(x + " " + y + " " + r + " " + s + "\n");
+                sh_fact = AbstractShapeFactory.getShapeFactory(s);
                 circle = sh_fact.getShape(cntx,ShapeType.Circle);
                 Circle.setRadius(r);
                 Circle.setLocation(x, y);
                 sh_lyt.addView(circle);
-                sh_fact = AbstractShapeFactory.getShapeFactory(s);
             } catch (Exception e) {
-                cout.append(e.getMessage() +"Usage: circle x y r  s\n");
+                cout.append(e.getMessage() +"Usage: circle x y r s\n");
             }
         } else if (is_rectangle(str)) {
-            int x, y, x2, y2, s;
+            int x, y, x1, y1, s;
             try {
                 x = get_int();
                 y = get_int();
-                x2 = get_int();
-                y2 = get_int();
+                x1 = get_int();
+                y1 = get_int();
                 s = get_int();
-                cout.append(x + " "  + y + " " +  x2 + " " + y2 + " " + s + "\n");
-                rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
-                sh_lyt.addView(rectangle);
+                cout.append(x + " " + y + " " + x1 + " " + y1 + " " + s + "\n");
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
+                rectangle = sh_fact.getShape(cntx, ShapeType.Rectangle);
+                Rectangle.setRectXY(x,y,x1,y1);
+                sh_lyt.addView(rectangle);
             } catch (Exception e) {
                 cout.append(e.getMessage() + "Usage: Rectangle x1 y1 x2 y2 s\n");
             }
@@ -301,30 +286,5 @@ public class main extends AppCompatActivity {
             err = Error.Syntax_error;
         }
         return err;
-    }
-
-    void adjustShapeAlpha() {
-        for (int i = 0; i < sh_lst.size(); i++) {
-            Shape tmp = (Shape) sh_lst.get(i);
-            if (tmp.getShapeAlpha() > 0.1f) {
-                tmp.setShapeAlpha(tmp.getShapeAlpha() - 0.1f);
-            } else {
-                tmp.removeShape();
-                sh_lst.remove(i);
-            }
-        }
-
-    }
-    void updateShapeCount() {
-        int rct_cnt = 0, crc_cnt = 0;
-        for (int i = 0; i < sh_lst.size(); i++) {
-            Shape tmp = (Shape) sh_lst.get(i);
-            ShapeType sh_t = tmp.getShapeType();
-            if (sh_t == ShapeType.Rectangle)
-                rct_cnt++;
-            else if (sh_t == ShapeType.Circle)
-                crc_cnt++;
-        }
-        txt_vw.setText(rct_cnt + " Rectangles, " + crc_cnt + " Circles.");
     }
 }
