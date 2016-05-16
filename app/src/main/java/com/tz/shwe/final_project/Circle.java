@@ -43,7 +43,7 @@ public class Circle extends Shape
         canvas.drawCircle(mPivotX, mPivotY, radius, pnt);
         pnt.setStyle(Paint.Style.STROKE);
         pnt.setColor((getColor(bdr)));
-        pnt.setStrokeWidth(10);
+        pnt.setStrokeWidth(radius * 20 / 100);
         canvas.drawCircle(mPivotX, mPivotY, radius, pnt);
     }
 }

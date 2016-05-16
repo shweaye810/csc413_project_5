@@ -39,7 +39,9 @@ public class Rectangle extends Shape
         canvas.drawRect(mRectX, mRectY, mRectX1, mRectY1, pnt);
         pnt.setStyle(Paint.Style.STROKE);
         pnt.setColor(getColor(bdr));
-        pnt.setStrokeWidth(10);
-        canvas.drawRect(mRectX-5, mRectY-5, mRectX1+5, mRectY1+5, pnt);
+        int r = (Math.abs(mRectX - mRectX1) + Math.abs(mRectY - mRectY1)) / 2;
+        r = r * 20 / 100;
+        pnt.setStrokeWidth(r);
+        canvas.drawRect(mRectX, mRectY, mRectX1, mRectY1, pnt);
     }
 }
