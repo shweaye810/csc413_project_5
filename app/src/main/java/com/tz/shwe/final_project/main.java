@@ -182,7 +182,7 @@ public class main extends AppCompatActivity {
         } else if (crt_tok.equalsIgnoreCase("(")) {
             l = paren_expr();
         } else {
-            throw new Exception("Syntax Error. Usage: int x = 0 ;\n");
+            throw new Exception("Syntax Error.\n");
         }
         return l;
     }
@@ -253,7 +253,7 @@ public class main extends AppCompatActivity {
                 map.put(new Var(s), new Int(i));
             }
         } else {
-            throw new Exception("Syntax Error. Usage: int x = 0 ;\n");
+            throw new Exception("Syntax Error.\n");
         }
     }
 
@@ -266,7 +266,7 @@ public class main extends AppCompatActivity {
             try {
                 expr_list(true);
             } catch (Exception e) {
-                cout.append(e.getMessage());
+                cout.append(e.getMessage() + "Usage: int x = 0 ;\n");
             }
         }
         else if (is_clear(crt_tok)){
@@ -283,7 +283,6 @@ public class main extends AppCompatActivity {
                 y = get_int();
                 r = get_int();
                 s = get_int();
-                cout.append(x + " " + y + " " + r + " " + s + "\n");
                 adjustShapeAlpha();
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
                 sh = sh_fact.getShape(cntx, ShapeType.Circle);
@@ -304,7 +303,6 @@ public class main extends AppCompatActivity {
                 x1 = get_int();
                 y1 = get_int();
                 s = get_int();
-                cout.append(x + " " + y + " " + x1 + " " + y1 + " " + s + "\n");
                 adjustShapeAlpha();
                 sh_fact = AbstractShapeFactory.getShapeFactory(s);
                 Rectangle.setRectXY(x, y, x1, y1);
