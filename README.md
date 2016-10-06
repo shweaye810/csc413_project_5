@@ -1,10 +1,10 @@
 # csc413_project_5 #
 
- This is an Android application that interpret the FourFP language.
+This is an Android application that interpret the FourFP language.
 
- It will allow a user to enter one statement at a time in a command line,
+It will allow a user to enter one statement at a time in a command line,
 
- which is then parsed, interpreted and executed to appropriate action.
+which is then parsed, interpreted and executed to appropriate action.
 
 ##User Manual
 
@@ -20,11 +20,11 @@ Minimum of one whitespace shall separate each lexeme.
 
 User may use one of following three keywords in a single statment.
 
-% 'int' - declare a variable and initialized to an integer literal
+ 'int' - declare a variable and initialized to an integer literal
 
-% 'circle' - draw circles, and 'rect' is used to draw rectangular shapes
+ 'circle' - draw circles, and 'rect' is used to draw rectangular shapes
 
-% 'clear' or 'cls' - remove all outputs from the screen and variables from the memory
+ 'clear' or 'cls' - remove all outputs from the screen and variables from the memory
 
 ####Usage examples:####
 
@@ -44,4 +44,30 @@ rect x1 y1 x2 y2 s
 
 x, y, r, x1, y1, x2, y2 can be literal integers or pre-assigned variables
 
-s is color code.
+s is color code. It can be mixed and match. First digit represents outside color and
+
+second digit represents inside color.
+
+i.e, 00 - black outside and inside; 17 - outside blue and inside red;
+
+####Color Code####
+
+0 = BLACK
+
+1 = BLUE
+
+2 = CYAN
+
+3 = GREEN
+
+4 = GRAY
+
+5 = LTGRAY
+
+6 = MAGENTA
+
+7 = RED
+
+8 = YELLOW
+
+9 = WHITE
